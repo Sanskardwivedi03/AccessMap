@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#102a43">
+  <meta name="description" content="AccessMap — personalised accessible mapping.">
+  <title>AccessMap — Personalised Accessible Mapping</title>
+
+  <!-- Minimalist UI font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Google Maps JavaScript API / Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+</head>
+
+<body>
+
+  <!-- ==================== LOGIN SCREEN ==================== -->
+
+  <section class="auth-screen" id="authScreen">
+
+    <div class="auth-card">
+
+      <div class="auth-brand">
+        <div class="brandmark">A</div>
+
+        <div style="flex:1">
+          <b>AccessMap</b>
+          <small>Accessible together</small>
+        </div>
+
+        <button
+          type="button"
+          class="icon-btn theme-toggle-btn"
+          onclick="toggleTheme()"
+          aria-label="Switch between light and dark theme"
+          title="Toggle theme"
+          style="padding:6px 14px; min-height:36px; font-size:0.85rem;"
+        >
+          <span class="auth-theme-icon">☀️</span>
+        </button>
+      </div>
+
+
+      <div class="auth-content">
+
+        <div class="eyebrow">
+          PERSONALISED ACCESSIBILITY
+        </div>
+
+        <h1 id="authTitle">
+          Welcome back
+        </h1>
+
+        <p class="auth-subtitle" id="authSubtitle">
+          Sign in to access your personalised accessibility dashboard.
+        </p>
+
+
+        <form id="loginForm">
+
+          <label>Email</label>
+
+          <input
+            id="loginEmail"
+            type="email"
+            placeholder="you@example.com"
+            required
+          >
+
+
+          <label>Password</label>
+
+          <div class="password-wrap">
+
+            <input
+              id="loginPassword"
+              type="password"
+              placeholder="Enter your password"
+              required
+            >
+
+            <button
+              type="button"
+              class="password-toggle"
+              onclick="togglePassword('loginPassword', this)"
+            >
+              Show
+            </button>
+
+          </div>
+
+
+          <div class="auth-row">
+
+            <label class="remember">
+
+              <input
+                type="checkbox"
+                id="rememberMe"
+              >
+
+              <span>Remember me</span>
+
+            </label>
+
+
+            <button
+              type="button"
+              class="text-btn"
+              onclick="showForgotPassword()"
+            >
+              Forgot password?
+            </button>
+
+          </div>
+
+
+          <button
+            class="btn primary auth-submit"
+            type="submit"
+          >
+            Sign in
+          </button>
+
+        </form>
+
+
+        <div class="divider">
+          <span>OR</span>
+        </div>
+
+
+        <button
+          class="btn google-btn"
+          onclick="demoGoogleLogin()"
+        >
+          Continue with Google
+        </button>
+
+
+        <p class="auth-switch">
+
+          Don't have an account?
+
+          <button
+            type="button"
+            class="text-btn"
+            onclick="showSignup()"
+          >
+            Create account
+          </button>
+
+        </p>
+
+
+        <div class="demo-note">
+          Demo login:
+          <b>demo@accessmap.com</b> /
+          <b>123456</b>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- ==================== APPLICATION ==================== -->
+
+  <div
+    id="app"
+    class="app hidden"
+  >
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+      <div class="brand">
+
+        <div class="brandmark">
+          A
+        </div>
+
+        <div>
+          <b>AccessMap</b>
+          <small>Accessible together</small>
+        </div>
+
+      </div>
+
+
+      <nav class="nav">
+
+        <button
+          class="active"
+          data-page="home"
+        >
+          <span class="ico">⌂</span>
+          <span>Dashboard</span>
+        </button>
+
+
+        <button data-page="explore">
+
+          <span class="ico">⌖</span>
+          <span>Explore Map</span>
+
+        </button>
+
+
+        <button data-page="profile">
+
+          <span class="ico">♿</span>
+          <span>My Accessibility</span>
+
+        </button>
+
+
+        <button data-page="community">
+
+          <span class="ico">★</span>
+          <span>Community</span>
+
+        </button>
+
+
+        <button onclick="showVoice()">
+
+          <span class="ico">◉</span>
+          <span>Voice Assistant</span>
+
+        </button>
+
+
+        <button onclick="toggleTheme()" id="sidebarThemeBtn" aria-label="Switch between light and dark theme">
+
+          <span class="ico" id="sidebarThemeIcon">☀️</span>
+          <span id="sidebarThemeText">Light mode</span>
+
+        </button>
+
+      </nav>
+
+
+      <div class="sidebar-card">
+
+        <span class="profile-dot"></span>
+
+        <b>Personalised mode</b>
+
+        <br>
+
+        <span>
+          Mobility + visual support
+        </span>
+
+      </div>
+
+    </aside>
+
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main">
+
+
+      <!-- ================= HOME ================= -->
+
+      <section
+        class="page active"
+        id="home"
+      >
+
+        <div class="topbar">
+
+          <div>
+
+            <div class="eyebrow">
+              Personalised accessible mapping
+            </div>
+
+            <h1>
+              Welcome back,
+              <span id="userName">
+                User
+              </span>
+            </h1>
+
+            <p>
+              Find places that work for
+              <b>your</b>
+              accessibility needs.
+            </p>
+
+          </div>
+
+
+          <div class="actions">
+
+            <button
+              class="icon-btn theme-toggle-btn"
+              id="themeToggleBtn"
+              onclick="toggleTheme()"
+              aria-label="Switch between light and dark theme"
+            >
+              <span id="themeIcon">☀️</span>
+              <span id="themeText">Light mode</span>
+            </button>
+
+
+            <button
+              class="icon-btn"
+              onclick="go('profile')"
+            >
+              Profile
+            </button>
+
+
+            <button
+              class="icon-btn logout-btn"
+              onclick="logout()"
+            >
+              Log out
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="hero">
+
+          <div
+            class="eyebrow"
+            style="color:#8fe5d1"
+          >
+            NEARBY DISCOVERY
+          </div>
+
+
+          <h2>
+            Go where accessibility meets confidence.
+          </h2>
+
+
+          <p>
+            Explore nearby places, understand their facilities,
+            compare accessible routes and use community updates
+            before you visit.
+          </p>
+
+
+          <div class="hero-tags">
+
+            <span class="hero-tag">
+              ♿ Mobility-aware
+            </span>
+
+            <span class="hero-tag">
+              Visual support
+            </span>
+
+            <span class="hero-tag">
+              Accessible routes
+            </span>
+
+            <span class="hero-tag">
+              Community verified
+            </span>
+
+          </div>
+
+
+          <div class="search">
+
+            <input
+              id="homeSearch"
+              placeholder="Search a hospital, mall, café or any place..."
+              onkeydown="if(event.key==='Enter')searchPlace(this.value)"
+            >
+
+
+            <button
+              class="btn orange"
+              onclick="searchPlace(document.getElementById('homeSearch').value)"
+            >
+              Find a place
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="section-head">
+
+          <button
+            class="btn light"
+            onclick="go('explore')"
+          >
+            Explore map →
+          </button>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- ================= EXPLORE ================= -->
+
+      <section
+        class="page"
+        id="explore"
+      >
+
+        <div class="topbar">
+
+          <div>
+
+            <div class="eyebrow">
+              Map & discovery
+            </div>
+
+            <h1>
+              Explore accessible places
+            </h1>
+
+            <p>
+              Results are prioritised according to your accessibility profile.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="card"
+          style="padding:13px"
+        >
+
+          <div
+            class="search"
+            style="margin:0;max-width:none"
+          >
+
+            <input
+              id="mapSearch"
+              placeholder="Search by place or category..."
+              onkeydown="if(event.key==='Enter')searchPlace(this.value)"
+            >
+
+
+            <button
+              class="btn primary"
+              onclick="searchPlace(document.getElementById('mapSearch').value)"
+            >
+              Search
+            </button>
+
+          </div>
+
+
+          <div class="filterbar">
+
+            <button class="filter active">
+             Best match
+            </button>
+
+            <button class="filter active">
+              Ramps
+            </button>
+
+            <button class="filter active">
+              Tactile paths
+            </button>
+
+            <button class="filter active">
+              Accessible routes
+            </button>
+
+            <button class="filter">
+              Elevator
+            </button>
+
+            <button class="filter">
+              Assistance
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="grid two"
+          style="margin-top:18px"
+        >
+
+          <div class="map-wrap">
+
+            <div id="googleMap" class="google-map" aria-label="AccessMap OpenStreetMap map"></div>
+
+            <button
+              class="loc"
+              onclick="useMyLocation()"
+            >
+              📍 Use my location
+            </button>
+
+            <p class="map-help">
+              Click an accessibility marker to view place details and directions.
+            </p>
+
+          </div>
+
+
+
+          <div class="card">
+
+            <div
+              class="section-head"
+              style="margin-top:0"
+            >
+
+              <h2>
+                Nearby results
+              </h2>
+
+              <span class="badge blue">
+                4 matches
+              </span>
+
+            </div>
+
+
+            <div class="place">
+
+              <div class="place-icon">
+                Hospital
+              </div>
+
+              <div style="flex:1">
+
+                <h3>
+                  City Hospital
+                </h3>
+
+                <p>
+                  1.2 km · 4.7
+                </p>
+
+                <div class="badges">
+
+                  <span class="badge">
+                    Ramp
+                  </span>
+
+                  <span class="badge">
+                    Tactile
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <button
+                class="btn light"
+                onclick="openPlace('City Hospital')"
+              >
+                Details
+              </button>
+
+            </div>
+
+
+            <div class="place">
+
+              <div class="place-icon">
+                Mall
+              </div>
+
+              <div style="flex:1">
+
+                <h3>
+                  Central Mall
+                </h3>
+
+                <p>
+                  2.4 km · 4.4
+                </p>
+
+                <div class="badges">
+
+                  <span class="badge">
+                    Elevator
+                  </span>
+
+                  <span class="badge">
+                    Toilet
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <button
+                class="btn light"
+                onclick="openPlace('Central Mall')"
+              >
+                Details
+              </button>
+
+            </div>
+
+
+            <div class="place">
+
+              <div class="place-icon">
+                Cafe
+              </div>
+
+              <div style="flex:1">
+
+                <h3>
+                  Green Café
+                </h3>
+
+                <p>
+                  3.1 km · 4.2
+                </p>
+
+                <div class="badges">
+
+                  <span class="badge">
+                    Ramp
+                  </span>
+
+                  <span class="badge blue">
+                    Wide entrance
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <button
+                class="btn light"
+                onclick="openPlace('Green Café')"
+              >
+                Details
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- ================= PROFILE ================= -->
+
+      <section
+        class="page"
+        id="profile"
+      >
+
+        <div class="topbar">
+
+          <div>
+
+            <div class="eyebrow">
+              Personalisation
+            </div>
+
+            <h1>
+              My Accessibility Profile
+            </h1>
+
+            <p>
+              The application stays the same; the information you need is prioritised.
+            </p>
+
+          </div>
+
+
+          <button
+            class="btn primary"
+            onclick="saveProfile()"
+          >
+            Save changes
+          </button>
+
+        </div>
+
+
+        <div class="profile">
+
+
+          <div class="profile-card">
+
+            <div
+              class="avatar"
+              id="profileAvatar"
+            >
+              U
+            </div>
+
+
+            <div
+              class="eyebrow"
+              style="color:#8fe5d1"
+            >
+              CURRENT PROFILE
+            </div>
+
+
+            <h2>
+              Mobility + Visual Support
+            </h2>
+
+
+            <p>
+              Your profile helps the system prioritise relevant facilities,
+              route information and voice interaction.
+            </p>
+
+
+            <div class="hero-tags">
+
+              <span class="hero-tag">
+                Ramps
+              </span>
+
+              <span class="hero-tag">
+                Tactile paths
+              </span>
+
+              <span class="hero-tag">
+                Accessible routes
+              </span>
+
+              <span class="hero-tag">
+                Audio information
+              </span>
+
+            </div>
+
+          </div>
+
+
+
+          <div class="card">
+
+            <h2>
+              Accessibility needs
+            </h2>
+
+
+            <div class="choice">
+
+              Mobility support
+
+              <div
+                class="switch on"
+                onclick="toggle(this)"
+              >
+                <i></i>
+              </div>
+
+            </div>
+
+
+            <div class="choice">
+
+              Visual support
+
+              <div
+                class="switch on"
+                onclick="toggle(this)"
+              >
+                <i></i>
+              </div>
+
+            </div>
+
+
+            <div class="choice">
+
+              Hearing support
+
+              <div
+                class="switch"
+                onclick="toggle(this)"
+              >
+                <i></i>
+              </div>
+
+            </div>
+
+
+            <div class="choice">
+
+              Speech / communication support
+
+              <div
+                class="switch"
+                onclick="toggle(this)"
+              >
+                <i></i>
+              </div>
+
+            </div>
+
+
+            <h2>
+              Prioritise information
+            </h2>
+
+
+            <div class="choice">
+
+              Ramps & accessible entrances & Wheel Chairs
+
+              <div
+                class="switch on"
+                onclick="toggle(this)"
+              >
+                <i></i>
+              </div>
+
+            </div>
+
+
+            <div class="choice">
+
+              Tactile paths
+
+              <div
+                class="switch on"
+                onclick="toggle(this)"
+              >
+                <i></i>
+              </div>
+
+            </div>
+
+
+            <div class="choice">
+
+              Route barriers
+
+              <div
+                class="switch on"
+                onclick="toggle(this)"
+              >
+                <i></i>
+              </div>
+
+            </div>
+
+
+            <div class="choice">
+
+              Voice information
+
+              <div
+                class="switch on"
+                onclick="toggle(this)"
+              >
+                <i></i>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- ================= COMMUNITY ================= -->
+
+      <section
+        class="page"
+        id="community"
+      >
+
+        <div class="topbar">
+
+          <div>
+
+            <div class="eyebrow">
+              Community intelligence
+            </div>
+
+            <h1>
+              Reviews & Reports
+            </h1>
+
+            <p>
+              User experiences keep accessibility information timely.
+            </p>
+
+          </div>
+
+
+          <button
+            class="btn orange"
+            onclick="showReport()"
+          >
+            Report an issue
+          </button>
+
+        </div>
+
+
+        <div class="grid two">
+
+
+          <div class="card">
+
+            <div
+              class="section-head"
+              style="margin-top:0"
+            >
+
+              <h2>
+                Recent accessibility reports
+              </h2>
+
+              <span class="badge warn">
+                Live updates
+              </span>
+
+            </div>
+
+
+            <div class="review">
+
+              <span class="status pending">
+                Pending
+              </span>
+
+              <b>
+                City Hospital
+              </b>
+
+              <p>
+                Ramp entrance was temporarily blocked.
+              </p>
+
+              <small>
+                Reported by community · 2 hours ago
+              </small>
+
+            </div>
+
+
+            <div class="review">
+
+              <span class="status">
+                Verified
+              </span>
+
+              <b>
+                Central Mall
+              </b>
+
+              <p>
+                New accessible parking spaces are available.
+              </p>
+
+              <small>
+                Verified by admin · Yesterday
+              </small>
+
+            </div>
+
+          </div>
+
+
+
+          <div class="card">
+
+            <div
+              class="section-head"
+              style="margin-top:0"
+            >
+
+              <h2>
+                Place reviews
+              </h2>
+
+              <button
+                class="btn light"
+                onclick="openReviewForm()"
+              >
+                Add review
+              </button>
+
+            </div>
+
+
+            <div id="communityReviews" aria-live="polite">
+              <p class="review-empty">Loading community reviews...</p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+
+  <!-- ================= PLACE MODAL ================= -->
+
+  <div
+    class="modal"
+    id="placeModal"
+  >
+
+    <div class="modalbox">
+
+      <button
+        class="close"
+        onclick="hide('placeModal')"
+      >
+        X
+      </button>
+
+
+      <div class="detail-banner">
+
+        <div>
+
+          <div class="eyebrow">
+            PERSONALISED PLACE VIEW
+          </div>
+
+          <h2
+            id="placeTitle"
+          >
+            City Hospital
+          </h2>
+
+          <p>
+            1.2 km · Hospital · 4.7
+          </p>
+
+        </div>
+
+
+        <div class="match">
+
+          <b>
+            94%
+          </b>
+
+          <small>
+            profile match
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="facility">
+
+        <div class="tick">
+          ✓
+        </div>
+
+        <div>
+
+          <b>
+            Ramp & accessible entrance
+          </b>
+
+          <br>
+
+          <small>
+            Main entrance is accessible.
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="facility">
+
+        <div class="tick">
+          ✓
+        </div>
+
+        <div>
+
+          <b>
+            Tactile path
+          </b>
+
+          <br>
+
+          <small>
+            Connects entrance to reception.
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="facility">
+
+        <div class="tick">
+          ✓
+        </div>
+
+        <div>
+
+          <b>
+            Assistance available
+          </b>
+
+          <br>
+
+          <small>
+            Helper desk near reception.
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="facility">
+
+        <div class="tick">
+          ✓
+        </div>
+
+        <div>
+
+          <b>
+            Accessible route
+          </b>
+
+          <br>
+
+          <small>
+            Low-barrier route prioritised for your profile.
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="modal-actions">
+
+        <button
+          class="btn light"
+          onclick="hide('placeModal');showReport()"
+        >
+          Report issue
+        </button>
+
+        <button
+          class="btn light"
+          onclick="openCommunityReviews()"
+        >
+          Read reviews
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ================= ROUTE MODAL ================= -->
+
+  <div
+    class="modal"
+    id="routeModal"
+  >
+
+    <div class="modalbox route-modal-box">
+
+      <button
+        class="close"
+        onclick="hide('routeModal')"
+      >
+        X
+      </button>
+
+      <div class="eyebrow">
+        GOOGLE MAPS ROUTING
+      </div>
+
+      <h2 id="routeTitle">
+        Route to destination
+      </h2>
+
+      <div class="route-inputs">
+
+        <div>
+          <label>Starting point</label>
+          <div class="route-start-row">
+            <input id="routeOrigin" type="text" placeholder="Your current location">
+            <button class="btn light" onclick="useRouteLocation()">📍</button>
+          </div>
+        </div>
+
+        <div>
+          <label>Destination</label>
+          <input id="routeDestination" type="text" readonly>
+        </div>
+
+      </div>
+
+      <div class="route-options">
+        <button class="route-mode active" data-mode="WALKING" onclick="setTravelMode('WALKING', this)">🚶 Walking</button>
+        <button class="route-mode" data-mode="DRIVING" onclick="setTravelMode('DRIVING', this)">🚗 Driving</button>
+      </div>
+
+      <div id="routeGoogleMap" class="route-google-map" aria-label="AccessMap route map"></div>
+
+      <div id="routeSummary" class="route-summary">
+        Select a route to calculate directions.
+      </div>
+
+      <div id="routeWarning" class="route-warning hidden"></div>
+      <div id="routeSteps" class="route-steps"></div>
+
+      <div class="modal-actions">
+        <button class="btn primary" onclick="openGoogleMapsNavigation()">
+          Open in OpenStreetMap
+        </button>
+        <button class="btn light" onclick="calculateRoute()">
+          Recalculate route
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ================= VOICE MODAL ================= -->
+
+  <div
+    class="modal"
+    id="voiceModal"
+  >
+
+    <div class="modalbox">
+
+      <button
+        class="close"
+        onclick="hide('voiceModal')"
+      >
+        X
+      </button>
+
+
+      <div class="voice-card">
+
+        <div class="mic">
+          Voice
+        </div>
+
+
+        <div
+          class="eyebrow"
+          style="color:#8fe5d1"
+        >
+          VOICE ASSISTANT
+        </div>
+
+
+        <h2>
+          How can I help you?
+        </h2>
+
+
+        <p>
+          Try: "Find an accessible hospital nearby."
+        </p>
+
+
+        <button
+          class="btn voice-btn"
+          onclick="toast('Prototype: voice request received')"
+        >
+          Start listening
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ================= ADD REVIEW MODAL ================= -->
+
+  <div class="modal" id="reviewModal">
+    <div class="modalbox review-modal-box">
+      <button class="close" onclick="hide('reviewModal')">X</button>
+
+      <div class="eyebrow">COMMUNITY REVIEW</div>
+      <h2>Review a place</h2>
+      <p>Share your experience to help others make informed accessibility decisions.</p>
+
+      <label for="reviewPlace">Place</label>
+      <select id="reviewPlace" required>
+        <option value="">Choose a place</option>
+      </select>
+
+      <label for="reviewRating">Rating</label>
+      <select id="reviewRating" required>
+        <option value="5">★★★★★ — Excellent</option>
+        <option value="4">★★★★☆ — Good</option>
+        <option value="3">★★★☆☆ — Average</option>
+        <option value="2">★★☆☆☆ — Poor</option>
+        <option value="1">★☆☆☆☆ — Very poor</option>
+      </select>
+
+      <label for="reviewComment">Your review</label>
+      <textarea id="reviewComment" rows="4" maxlength="1500" placeholder="Describe the accessibility and your experience..." required></textarea>
+
+      <div class="modal-actions">
+        <button class="btn primary" id="submitReviewBtn" onclick="submitReview()">Submit review</button>
+        <button class="btn light" onclick="hide('reviewModal')">Cancel</button>
+      </div>
+      <small class="review-form-note">You must be signed in to submit a review.</small>
+    </div>
+  </div>
+
+
+  <!-- ================= REPORT MODAL ================= -->
+
+  <div
+    class="modal"
+    id="reportModal"
+  >
+
+    <div class="modalbox">
+
+      <button
+        class="close"
+        onclick="hide('reportModal')"
+      >
+        X
+      </button>
+
+
+      <div class="eyebrow">
+        COMMUNITY UPDATE
+      </div>
+
+
+      <h2>
+        Report an accessibility issue
+      </h2>
+
+
+      <p>
+        Your report can be reviewed by the admin and help keep
+        place information current.
+      </p>
+
+
+      <select id="rtype">
+
+        <option>
+          Ramp / entrance issue
+        </option>
+
+        <option>
+          Tactile path issue
+        </option>
+
+        <option>
+          Route barrier
+        </option>
+
+        <option>
+          Facility unavailable
+        </option>
+
+        <option>
+          Other
+        </option>
+
+      </select>
+
+
+      <textarea
+        id="rtext"
+        placeholder="Describe what happened..."
+      ></textarea>
+
+
+      <div class="modal-actions">
+
+        <button
+          class="btn primary"
+          onclick="submitReport()"
+        >
+          Submit report
+        </button>
+
+
+        <button
+          class="btn light"
+          onclick="hide('reportModal')"
+        >
+          Cancel
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ================= FORGOT PASSWORD ================= -->
+
+  <div
+    class="modal"
+    id="forgotModal"
+  >
+
+    <div class="modalbox">
+
+      <button
+        class="close"
+        onclick="hide('forgotModal')"
+      >
+        X
+      </button>
+
+
+      <div class="eyebrow">
+        ACCOUNT RECOVERY
+      </div>
+
+
+      <h2>
+        Reset your password
+      </h2>
+
+
+      <p>
+        Enter your email address. In a real application this
+        would send a password reset link.
+      </p>
+
+
+      <input
+        id="resetEmail"
+        type="email"
+        placeholder="you@example.com"
+      >
+
+
+      <div class="modal-actions">
+
+        <button
+          class="btn primary"
+          onclick="resetPassword()"
+        >
+          Send reset link
+        </button>
+
+
+        <button
+          class="btn light"
+          onclick="hide('forgotModal')"
+        >
+          Cancel
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="toast"
+    id="toast"
+  ></div>
+
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="script.js"></script>
+
+</body>
+</html>
