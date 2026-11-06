@@ -1,0 +1,6 @@
+node_modules/
+.env
+*.log
+git
+accessmap-backend/Frontend/
+accessmap-backend/accessmap-backend/
