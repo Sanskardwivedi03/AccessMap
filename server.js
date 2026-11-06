@@ -16,7 +16,11 @@ const app = express();
 connectDB();
 
 const corsOptions = {
-  origin: ['https://www.google.com'],
+  origin: [
+    'https://dulcet-crepe-d0c562.netlify.app',
+    'http://localhost:5500',
+    'http://127.0.0.1:5500'
+  ],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
