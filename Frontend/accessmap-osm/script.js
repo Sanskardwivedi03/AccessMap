@@ -191,7 +191,7 @@ function updateThemeButtons() {
    LOGIN / AUTHENTICATION
    ========================================================= */
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://accessmap-xz75.onrender.com/api";
 
 let accessMapToken = localStorage.getItem("accessMapToken") || null;
 
@@ -1366,7 +1366,7 @@ async function saveProfile() {
 
     try {
         const response = await fetch(
-            "http://localhost:5000/api/profile",
+            `${API_BASE_URL}/profile`,
             {
                 method: "PUT",
                 headers: {
